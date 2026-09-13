@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: tinybit-web
+    runtime: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn tiny_bit.wsgi:application
+    healthCheckPath: /api/urls/
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "tinybit-web.onrender.com"
+      - key: BASE_URL
+        value: "https://tinybit-web.onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "3306"
+      - key: REDIS_URL
+        sync: false
+
+  - type: worker
+    name: tinybit-click-flusher
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python manage.py flush_click_counts
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "tinybit-web.onrender.com"
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "3306"
+      - key: REDIS_URL
+        sync: false
